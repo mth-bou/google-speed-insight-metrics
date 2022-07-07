@@ -1,0 +1,18 @@
+form#test_url {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+body {
+    background: rgba(12, 0, 29, 0.76) !important;
+}
+
+.table {
+    --bs-table-color: #ffffff !important;
+}
+
+div#infos {
+    color: #fff;
+}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <title>Test Google Page Speed Insight</title>
+</head>
+<body>
+<div class="container">
+    <div id="url-form-wrapper" class="row justify-content-center mt-5">
+        <div class="col-6">
+            <form id="test_url">
+                <input type="url" name="url" class="form-control" placeholder="URL" required />
+                <button type="submit" class="btn btn-primary">Tester</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="progress-bar-wrapper" class="row justify-content-center mt-5 d-none">
+        <div class="col-6">
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" style="width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-5">
+        <div class="col-6">
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#infos" role="button" aria-expanded="false" aria-controls="collapseExample">
+                Obtenir plus d'informations
+            </a>
+            <div id="infos" class="collapse">
+                <img src="./assets/img/info_core_web_vitals.png" alt="infos sur LCP, FID et CLS" class="w-100 mt-3 mb-3">
+                <ul>
+                    <li>Core Web Vitals : Si toutes les métriques sont bonnes => <code style="color: #0ea000;">Réussite</code>, sinon <code style="color: #ff0000;">Echec</code></li>
+                    <li>FID (First Input Delay) : Mesure l'interactivité de la page (< = 100ms est bon).</li>
+                    <li>LCP (Largest Contentful Paint) : Mesure les performances de chargement de la page (< = 2,5s est bon).</li>
+                    <li>CLS (Cumulative Layout Shift) : Mesure la stabilité visuelle (< = 0,1s est bon).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="results-table-wrapper" class="results mt-5 mb-5">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">URL</th>
+                    <th scope="col">Desktop Core Web Vitals</th>
+                    <th scope="col">LCP</th>
+                    <th scope="col">FID</th>
+                    <th scope="col">CLS</th>
+                    <th scope="col">Mobile Core Web Vitals</th>
+                    <th scope="col">LCP</th>
+                    <th scope="col">FID</th>
+                    <th scope="col">CLS</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+</body>
+</html>
