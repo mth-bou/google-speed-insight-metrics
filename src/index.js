@@ -1,5 +1,5 @@
-import {run, setUpQuery} from "./modules/getMetrics";
-import {isCoreWebVitalsPassed, formatDate, addResultToTable} from "./modules/helper";
+import {run} from "./modules/getMetrics";
+import {addResultToTable, formatDate} from "./modules/helper";
 
 let api_url = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
 let input_url = document.querySelector("input[name='url']");
@@ -8,8 +8,8 @@ let progress_bar = document.getElementById('progress-bar-wrapper');
 let today = new Date();
 let urlToTest;
 let metrics;
-let isPassed;
 let dataStorage = localStorage;
+
 
 let parseDataToStore = (data) => {
     return JSON.stringify(data);
@@ -20,9 +20,33 @@ let readDataFromStorage = (data) => {
 }
 
 let storeMetrics = (metrics) => {
-    if (metrics.desktopMetrics) dataStorage.setItem(formatDate(today) + '-desktopMetrics', parseDataToStore(metrics.desktopMetrics));
-    if (metrics.mobileMetrics) dataStorage.setItem(formatDate(today) + '-mobileMetrics', parseDataToStore(metrics.mobileMetrics));
+    if (metrics.desktopMetrics) dataStorage.setItem('desktopMetrics', parseDataToStore(metrics.desktopMetrics));
+    if (metrics.mobileMetrics) dataStorage.setItem('mobileMetrics', parseDataToStore(metrics.mobileMetrics));
 }
+
+let getPreviousData = () => {
+    let previousDataExist = true;
+    for (let i = 0; i < dataStorage.length; i++) {
+        if (dataStorage.key(i) === 'mobileMetrics' || dataStorage.key(i) === 'desktopMetrics') {
+            previousDataExist = true;
+        } else {
+            previousDataExist = false;
+        }
+    }
+
+    if (previousDataExist) {
+        let desktopMetrics = readDataFromStorage(dataStorage.getItem('mobileMetrics'));
+        let mobileMetrics = readDataFromStorage(dataStorage.getItem('desktopMetrics'));
+
+        for (let date in desktopMetrics) {
+            if (date !== formatDate(today) && Date.parse(date) < today) {
+                addResultToTable(desktopMetrics, mobileMetrics, date);
+            }
+        }
+    }
+}
+
+getPreviousData();
 
 form_elem.addEventListener('submit', async (e) => {
 
@@ -32,36 +56,29 @@ form_elem.addEventListener('submit', async (e) => {
     urlToTest = input_url.value;
 
     if (urlToTest) {
-        metrics = await run(api_url, process.env.API_KEY, urlToTest);
+        metrics = await run(api_url, process.env.API_KEY, urlToTest, formatDate(today));
         // Hide progress bar
         progress_bar.classList.add('d-none');
-        isPassed = isCoreWebVitalsPassed(metrics);
     }
 
-    if (dataStorage.getItem(formatDate(today) + '-desktopMetrics') === null &&
-        dataStorage.getItem(formatDate(today) + '-mobileMetrics') === null) {
-
+    // If metrics don't exist, we store them
+    if (dataStorage.getItem('desktopMetrics') === null && dataStorage.getItem('mobileMetrics') === null) {
         storeMetrics(metrics);
+    } else { // If previous metrics exist but are earlier than today, we store new metrics
 
-        if (isPassed.isDesktopPassed) {
-            dataStorage.setItem(formatDate(today) + '-desktopCoreWebVitalsPassed', 'Succès');
-        } else {
-            dataStorage.setItem(formatDate(today) + '-desktopCoreWebVitalsPassed', 'Echec');
+        let desktopMetrics = readDataFromStorage(dataStorage.getItem('desktopMetrics'));
+        let mobileMetrics = readDataFromStorage(dataStorage.getItem('mobileMetrics'));
+
+        for (let date in desktopMetrics) {
+            console.log(date);
+            if (!isNaN(Date.parse(date))) {
+                //if (Date.parse(date) < today) {
+                    storeMetrics(metrics);
+                    addResultToTable(desktopMetrics, mobileMetrics, date);
+
+                //}
+            }
         }
-
-        if (isPassed.isMobilePassed) {
-            dataStorage.setItem(formatDate(today) + '-mobileCoreWebVitalsPassed', 'Succès');
-        } else {
-            dataStorage.setItem(formatDate(today) + '-mobileCoreWebVitalsPassed', 'Echec');
-        }
-
     }
-
-    let desktopCoreWebVitals = dataStorage.getItem(formatDate(today) + '-desktopCoreWebVitalsPassed');
-    let mobileCoreWebVitals = dataStorage.getItem(formatDate(today) + '-mobileCoreWebVitalsPassed');
-    let desktopMetrics = readDataFromStorage(dataStorage.getItem(formatDate(today) + '-desktopMetrics'));
-    let mobileMetrics = readDataFromStorage(dataStorage.getItem(formatDate(today) + '-mobileMetrics'));
-
-    addResultToTable(desktopMetrics, mobileMetrics, desktopCoreWebVitals, mobileCoreWebVitals, formatDate(today));
 
 });

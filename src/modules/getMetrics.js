@@ -1,9 +1,12 @@
 import {formatDate} from "./helper";
+import constants from "./constants";
 
-async function run(apiUrl, apiKey, urlToTest) {
-    //const today = formatDate(new Date());
+async function run(apiUrl, apiKey, urlToTest, date) {
+
     const url = setUpQuery(apiUrl, apiKey, urlToTest);
     const mobileUrl = url + '&strategy=MOBILE';
+    let dateDesktopMetrics = {};
+    let dateMobileMetrics = {};
     let metrics = {};
     let desktopMetrics = {};
     let mobileMetrics = {};
@@ -28,6 +31,7 @@ async function run(apiUrl, apiKey, urlToTest) {
         })
         .catch(error => console.log(error.message));
 
+    // Other kind of fetching results to get bytes received too
     /*const desktopReader = desktopResponse.body.getReader();
     const contentLength = desktopResponse.headers.get('Content-Length');
 
@@ -77,9 +81,19 @@ async function run(apiUrl, apiKey, urlToTest) {
             CLS: lighthouse.audits['cumulative-layout-shift'].numericValue
         }
 
-        desktopMetrics['url'] = json.id;
-        desktopMetrics['coreWebVitalsMetrics'] = coreWebVitalsMetrics;
-        desktopMetrics['lighthouseValues'] = lighthouseValues;
+        // DESKTOP CORE WEB VITALS VALUE
+         if (coreWebVitalsMetrics.LCP !== constants.MetricsConstants.BETTER_NOTE ||
+            coreWebVitalsMetrics.FID !== constants.MetricsConstants.BETTER_NOTE ||
+            coreWebVitalsMetrics.CLS !== constants.MetricsConstants.BETTER_NOTE) {
+             dateDesktopMetrics['coreWebVitalsMetricsPassed'] = 'Echec';
+         } else {
+             dateDesktopMetrics['coreWebVitalsMetricsPassed'] = 'Succès';
+         }
+
+        dateDesktopMetrics['url'] = json.id;
+        dateDesktopMetrics['coreWebVitalsMetrics'] = coreWebVitalsMetrics;
+        dateDesktopMetrics['lighthouseValues'] = lighthouseValues;
+        desktopMetrics[date] = dateDesktopMetrics;
 
     } else {
         throw new Error(`Error ! status : ${desktopResponse.status}`);
@@ -110,9 +124,19 @@ async function run(apiUrl, apiKey, urlToTest) {
             CLS: lighthouse.audits['cumulative-layout-shift'].numericValue
         }
 
-        mobileMetrics['url'] = json.id;
-        mobileMetrics['coreWebVitalsMetrics'] = coreWebVitalsMetrics;
-        mobileMetrics['lighthouseValues'] = lighthouseValues;
+         if (coreWebVitalsMetrics.LCP !== constants.MetricsConstants.BETTER_NOTE ||
+            coreWebVitalsMetrics.FID !== constants.MetricsConstants.BETTER_NOTE ||
+            coreWebVitalsMetrics.CLS !== constants.MetricsConstants.BETTER_NOTE) {
+             dateMobileMetrics['coreWebVitalsMetricsPassed'] = 'Echec';
+         } else {
+             dateMobileMetrics['coreWebVitalsMetricsPassed'] = 'Succès';
+         }
+
+        dateMobileMetrics['url'] = json.id;
+        dateMobileMetrics['coreWebVitalsMetrics'] = coreWebVitalsMetrics;
+        dateMobileMetrics['lighthouseValues'] = lighthouseValues;
+        mobileMetrics[date] = dateMobileMetrics;
+
     } else {
         throw new Error(`Error : status : ${mobileResponse.status}`);
     }
