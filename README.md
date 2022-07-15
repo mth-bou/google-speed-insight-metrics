@@ -1,6 +1,6 @@
 This app allows fetching performance results about a URI from Google Page Speed Insight API to store them in Web Storage.
 
-Then, you can easily identify some slowdowns that might be happening on your website from the table results.
+Then, you can easily identify some slowdowns during a period that might be happening on your website from the table results.
 
 Soon improvements : The script is automatically rerun twice a day with the previous URI filled to add additional results to the table.
 
